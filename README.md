@@ -2,7 +2,7 @@
 Rust library with python bindings and small http server to control the 2B
 
 ## HTTP server:
-To start the HTTP server run `cargo run --release -- [<path_to_2B>]`.
+To start the HTTP server run `cargo run --release -- [<path_to_2B> or "virtual"]`.
 
 ## Python bindings:
 Use `maturin build` to generate a Python library.
