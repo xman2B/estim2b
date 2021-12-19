@@ -2,7 +2,7 @@
 name = "estim2b_lib"
 version = "0.1.0"
 edition = "2021"
-
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,10 +11,10 @@ crate-type = ["cdylib", "lib"]
 name = "estim2b_lib"
 
 [features]
-default = ["usb", "virtual", "python"]
+default = ["usb", "virtual"]
 usb = []
 virtual = []
-python = ["usb", "virtual"]
+python = ["usb", "virtual", "pyo3"]
 
 [dependencies]
 serialport = { version = "4.0.1", features = [] }
@@ -22,7 +22,7 @@ serde = { version = "1.0.130", features = ["derive"] }
 num_enum = "0.5.4"
 strum = "0.22"
 strum_macros = "0.22"
-pyo3 = { features = ["extension-module"], git = "https://github.com/PyO3/pyo3", branch="main" }
+pyo3 = { features = ["extension-module", "abi3-py37"], git = "https://github.com/PyO3/pyo3", branch="main", optional=true }
 
 [dev-dependencies]
 serial_test = "0.5.1"
