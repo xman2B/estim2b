@@ -5,11 +5,6 @@ use std::time::Duration;
 
 use crate::*;
 
-#[cfg(unix)]
-const DEFAULT_TTY: &str = "/dev/ttyUSB0";
-#[cfg(windows)]
-const DEFAULT_TTY: &str = "COM3";
-
 const TIMEOUT: u64 = 100;
 
 impl From<serialport::Error> for TwoBError {
@@ -53,7 +48,12 @@ impl TryFrom<&str> for USBTwoB {
 
 impl USBTwoB {
     pub fn new() -> Result<Self, TwoBError> {
-        USBTwoB::try_from(DEFAULT_TTY)
+        for port in serialport::available_ports()? {
+            if let Ok(two_b) = USBTwoB::try_from(port.port_name.as_str()) {
+                return Ok(two_b);
+            }
+        }
+        Err(TwoBError::ConnectionError("2B could not be detected!".into()))
     }
 
     fn _send(io: &mut Box<dyn SerialPort>, msg: String) -> Result<String, TwoBError> {

@@ -190,17 +190,25 @@ fn get_version(two_b: &State<Arc<Mutex<Box<dyn TwoB>>>>) -> Json<String> {
     two_b.lock().unwrap().get_version().into()
 }
 
+use clap::Parser;
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    /// Serial port of 2B
+    #[clap(short, long)]
+    serial_port: Option<String>,
+}
+
 #[launch]
 fn rocket() -> _ {
-    let args: Vec<String> = std::env::args().collect();
     let two_b: Box<dyn TwoB>;
-    if args.len() >= 2 {
-        let path = args[1].trim();
+    let args = Args::parse();
+    if let Some(path) = args.serial_port {
         if path == "virtual" {
             two_b = Box::new(VirtualTwoB::new().unwrap());
         } else {
             two_b = Box::<USBTwoB>::new(
-                USBTwoB::try_from(path).expect("No 2B found on path the given path"),
+                USBTwoB::try_from(path.as_str()).unwrap_or_else(|_| panic!("No 2B found on serialport: {}", path))
             );
         }
     } else {
